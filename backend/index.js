@@ -4,6 +4,10 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 
+// Import routes
+const authRoute = require("./routes/auth");
+const userRoute = require("./routes/user");
+
 const app = express();
 dotenv.config();
 app.use(cors());
@@ -18,9 +22,8 @@ mongoose.connect(process.env.CONNECTION_STRING).then(() => {
 });
 
 //Routes
-const authRoute = require("./routes/auth");
 app.use("/v1/auth", authRoute);
-
+app.use("/v1/users", userRoute);
 app.listen(5000, () => {
   console.log("Server is running on port 5000.");
 });
