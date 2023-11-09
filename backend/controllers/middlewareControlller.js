@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const middlewareController = {
   verifyToken: (req, res, next) => {
     // Get token from header
-    const token = req.headers["authorization"];
+    const token = req.headers.authorization;
     // Check if token exists
     if (token) {
       const accessToken = token.split(" ")[1];
@@ -11,6 +11,7 @@ const middlewareController = {
         if (err) {
           return res.status(403).json({ message: "Invalid token" });
         }
+        // Set user in req.user
         req.user = user;
         next();
       });
@@ -20,6 +21,16 @@ const middlewareController = {
     else {
       res.status(401).json({ message: "You are not authenticated" });
     }
+  },
+  verifyTokenAndAdmin: (req, res, next) => {
+    // Check if user is admin or match with the id
+    middlewareController.verifyToken(req, res, () => {
+      if (req.user.admin || req.user.id === req.params.id) {
+        next();
+      } else {
+        res.status(403).json({ message: "You are not authorized" });
+      }
+    });
   },
 };
 

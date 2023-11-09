@@ -25,7 +25,7 @@ const authController = {
       const user = await User.findOne({ username: req.body.username });
       // Check if user exists
       if (!user) {
-        res.status(400).json({ message: "Wrong username or password." });
+        return res.status(400).json({ message: "Wrong username or password." });
       }
 
       // Check if password is correct
@@ -34,16 +34,16 @@ const authController = {
         user.password
       );
       if (!passwordMatch) {
-        res.status(400).json({ message: "Wrong username or password." });
+        return res.status(400).json({ message: "Wrong username or password." });
       }
       if (user && passwordMatch) {
         // Create jwt token
         const accessToken = jwt.sign(
           { id: user._id, admin: user.admin },
           process.env.JWT_ACCESS_SECRET,
-          { expiresIn: "30s" }
+          { expiresIn: "1d" }
         );
-        res.status(200).json({ user, accessToken });
+        return res.status(200).json({ user, accessToken });
       }
     } catch (error) {
       res.status(500).json(error);
